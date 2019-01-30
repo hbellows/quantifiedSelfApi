@@ -1,0 +1,2 @@
+[![Waffle.io - Issues in progress](https://badge.waffle.io/hbellows/quantifiedSelfApi.png?label=in%20progress&title=In%20Progress)](http://waffle.io/hbellows/quantifiedSelfApi)
+[![Build Status](https://travis-ci.org/hbellows/rain_or_shine.svg?branch=master)](https://travis-ci.org/hbellows/quantifiedSelfApi)
