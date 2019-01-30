@@ -1,4 +1,6 @@
 
+pry = require('pryjs')
+
 const chai = require('chai');
 const should = chai.should();
 const chaiHttp = require('chai-http');
@@ -70,4 +72,30 @@ describe('API Routes', () => {
        });
      });
 
+  describe('GET /api/v1/foods/:id', () => {
+    it('should return requested food', done => {
+       chai.request(server)
+         .get('/api/v1/foods/1')
+         .end((err, response) => {
+           response.should.have.status(200);
+           response.should.be.json;
+           response.body.should.be.a('array');
+           response.body.length.should.equal(1);
+           response.body[0].should.have.property('name');
+           response.body[0].should.have.property('calories');
+           response.body[0].name.should.equal('Banana');
+           response.body[0].calories.should.equal(150);
+           done();
+         });
+       });
+
+    it('should return an error if the requested food is not found', done => {
+      chai.request(server)
+      .get('/api/v1/foods/100')
+      .end((err, response) => {
+        response.should.have.status(404);
+        done();
+      });
+    });
+  });
 });
