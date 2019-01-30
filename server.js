@@ -1,3 +1,5 @@
+pry = require('pryjs')
+
 const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
@@ -24,6 +26,22 @@ app.get('/api/v1/foods', (request, response) => {
     response.status(500).json({ error });
   });
 });
+
+// app.get('/api/v1/foods/:id', (request, response) => {
+//   database('foods').where('id', request.params.id).select()
+//     .then(foods => {
+//       if (foods.length) {
+//         response.status(200).json(foods);
+//       } else {
+//         response.status(404).json({
+//           error: `Could not find food with id ${request.params.id}`
+//         });
+//       }
+//     })
+//     .catch(error => {
+//       response.status(500).json({ error });
+//     });
+// });
 
 
 app.listen(app.get('port'), () => {
