@@ -15,5 +15,8 @@ exports.seed = function(knex, Promise) {
         {name: "Granola Bar",calories: 200, created_at: new Date, updated_at: new Date},
         {name: "Sausage",calories: 9999, created_at: new Date, updated_at: new Date}
       ])
-    });
+      .then(() => console.log('Seeding complete!'))
+      .catch(error => console.log(`Error seeding data: ${error}`))
+    })
+    .catch(error => console.log(`Error seeding data: ${error}`));
 };
