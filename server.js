@@ -15,3 +15,5 @@ app.get('/', (request, response) => {
   response.send('Welcome to the Quantified Self API');
 });
 
+module.exports = app
+
