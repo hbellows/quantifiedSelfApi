@@ -15,8 +15,15 @@ app.get('/', (request, response) => {
   response.send('Welcome to the Quantified Self API');
 });
 
-
-
+app.get('/api/v1/foods', (request, response) => { 
+  database('foods').select()
+  .then((foods) => {
+    response.status(200).json(foods);
+  })
+  .catch((error) => {
+    response.status(500).json({ error });
+  });
+});
 
 
 app.listen(app.get('port'), () => {
