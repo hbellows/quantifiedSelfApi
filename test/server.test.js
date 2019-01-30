@@ -21,8 +21,53 @@ describe('Client Routes', () => {
       done();
     });
   });
+
+  it('should return a 404 for a route that does not exist', done => {
+    chai.request(server)
+    .get('/sad')
+    .end((err, response) => {
+      response.should.have.status(404);
+      done();
+    });
+  });
+
 });
 
 describe('API Routes', () => {
+  before((done) => {
+    database.migrate.latest()
+      .then(() => done())
+      .catch(error => {
+        throw error;
+      });
+  });
+
+  beforeEach((done) => {
+    database.seed.run()
+      .then(() => done())
+      .catch(error => {
+        throw error;
+      });
+  });
+
+  describe('GET /api/v1/foods', () => {
+    it('should return all foods', done => {
+       chai.request(server)
+         .get('/api/v1/foods')
+         .end((err, response) => {
+           response.should.have.status(200);
+           response.should.be.json;
+           response.body.should.be.a('array');
+           response.body.length.should.equal(9);
+           response.body[0].should.have.property('name');
+           response.body[0].should.have.property('calories');
+           response.body[0].name.should.equal('Banana');
+           response.body[0].calories.should.equal(150);
+           response.body[8].name.should.equal('Sausage');
+           response.body[8].calories.should.equal(9999);
+           done();
+         });
+       });
+     });
 
 });
