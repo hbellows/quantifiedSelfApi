@@ -1,6 +1,6 @@
 
 exports.seed = function(knex, Promise) {
-  return knex.raw('TRUNCATE meals RESTART IDENTITY')
+  return knex.raw('TRUNCATE meals RESTART IDENTITY CASCADE')
   .then(function () {
     return knex('meals').insert([
       {name: 'Breakfast', created_at: new Date, updated_at: new Date},
