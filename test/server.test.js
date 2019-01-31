@@ -1,4 +1,6 @@
 
+// npm run test-with-coverage
+
 const chai = require('chai');
 const should = chai.should();
 const chaiHttp = require('chai-http');
@@ -102,26 +104,26 @@ describe('API Routes', () => {
       chai.request(server)
        .patch('/api/v1/foods/1')
        .send({
-         name: "Apple",
-         calories: 200
+         name: "Cupcake",
+         calories: 250
        })
        .end((err, response) => {
          response.should.have.status(201);
          response.should.be.json;
          response.body.should.be.a('object');
          response.body.should.have.property('food');
-         response.body.food.name.should.equal('Apple');
-         response.body.food.calories.should.equal(200);
+         response.body.food.name.should.equal('Cupcake');
+         response.body.food.calories.should.equal(250);
        });
         done();
     });
 
     it('should return 404 if datatypes incorrect', done => {
       chai.request(server)
-       .patch('/api/v1/foods/10000000')
+       .patch('/api/v1/foods/10')
        .send({
-         name: "Apple",
-         calories: 200
+         name: "Cupcake",
+         calories: 250
        })
         .end((err, response) => {
           response.should.have.status(400);
@@ -133,13 +135,30 @@ describe('API Routes', () => {
      chai.request(server)
        .patch('/api/v1/foods/1')
        .send({
-         name: "Apple"
+         name: "Cupcake"
        })
         .end((err, response) => {
           response.should.have.status(422);
+          response.body.error.should.equal('Expected format: { name: <String>, calories: <String> }. You\'re missing a "calories" property.')
         });
         done();
      });
+  });
+
+  describe('DELETE /api/v1/foods/1', () => {
+    it('should delete a specific food', done => {
+      chai.request(server)
+        .delete('/api/v1/foods/1')
+        .end((err, response) => {
+          response.should.have.status(204);
+      });
+      chai.request(server)
+        .get('/api/v1/foods/1')
+        .end((err, response) => {
+          response.should.have.status(404);
+        done();
+        });
+    });
   });
   
 });
