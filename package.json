@@ -17,7 +17,8 @@
   },
   "scripts": {
     "test": "mocha --exit",
-    "test-with-coverage": "nyc --reporter=text mocha --exit"
+    "test-with-coverage": "nyc --reporter=text mocha --exit",
+    "test-with-codecov": "istanbul cover node_modules/mocha/bin/_mocha && codecov -F istanbul_mocha"
   },
   "repository": {
     "type": "git",
