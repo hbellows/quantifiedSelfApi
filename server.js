@@ -43,6 +43,27 @@ app.get('/api/v1/foods/:id', (request, response) => {
     });
 });
 
+app.patch('/api/v1/foods/:id', (request, response) => {
+  const food = request.body;
+
+  for (let requiredParameter of ['name', 'calories']) {
+    if (!food[requiredParameter]) {
+      return response
+        .status(422)
+        .send({ error: `Expected format: { title: <String>, author: <String> }. You're missing a "${requiredParameter}" property.` });
+    }
+  }
+
+  database('foods').where('id', request.params.id).update(food)
+    .then(foods => {
+      if (foods == 1) {
+        response.status(201).json({"food": food });
+      }
+    })
+    .catch((error) => {
+      response.status(400).json({ error });
+    });
+});
 
 app.listen(app.get('port'), () => {
   console.log(`${app.locals.title} is running on ${app.get('port')}.`);
