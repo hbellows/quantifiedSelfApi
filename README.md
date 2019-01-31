@@ -1,2 +1,3 @@
 [![Waffle.io - Columns and their card count](https://badge.waffle.io/hbellows/quantifiedSelfApi.svg?columns=all)](https://waffle.io/hbellows/quantifiedSelfApi)
 [![Build Status](https://travis-ci.org/hbellows/rain_or_shine.svg?branch=master)](https://travis-ci.org/hbellows/quantifiedSelfApi)
+[![codecov.io](https://codecov.io/gh/hbellows/quantifiedSelfApi/branch/master/graph/badge.svg)](https://codecov.io/gh/hbellows/quantifiedSelfApi)
