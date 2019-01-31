@@ -104,7 +104,7 @@ describe('API Routes', () => {
       chai.request(server)
        .patch('/api/v1/foods/1')
        .send({
-         name: "Cupcake",
+         name: "Grapes",
          calories: 250
        })
        .end((err, response) => {
@@ -112,7 +112,7 @@ describe('API Routes', () => {
          response.should.be.json;
          response.body.should.be.a('object');
          response.body.should.have.property('food');
-         response.body.food.name.should.equal('Cupcake');
+         response.body.food.name.should.equal('Grapes');
          response.body.food.calories.should.equal(250);
        });
         done();
@@ -122,7 +122,7 @@ describe('API Routes', () => {
       chai.request(server)
        .patch('/api/v1/foods/10')
        .send({
-         name: "Cupcake",
+         name: "Grapes",
          calories: 250
        })
         .end((err, response) => {
@@ -135,7 +135,7 @@ describe('API Routes', () => {
      chai.request(server)
        .patch('/api/v1/foods/1')
        .send({
-         name: "Cupcake"
+         name: "Grapes"
        })
         .end((err, response) => {
           response.should.have.status(422);
