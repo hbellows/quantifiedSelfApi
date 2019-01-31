@@ -98,4 +98,50 @@ describe('API Routes', () => {
       });
     });
   });
+
+  describe('PATCH /api/v1/foods/1', () => {
+    it('should update an existing food', done => {
+      chai.request(server)
+       .patch('/api/v1/foods/1')
+       .send({
+         name: "Apple",
+         calories: 200
+       })
+       .end((err, response) => {
+         response.should.have.status(201);
+         response.should.be.json;
+         response.body.should.be.a('object');
+         response.body.should.have.property('food');
+         response.body.food.name.should.equal('Apple');
+         response.body.food.calories.should.equal(200);
+       });
+        done();
+    });
+
+    it('should return 404 if datatypes incorrect', done => {
+      chai.request(server)
+       .patch('/api/v1/foods/10000000')
+       .send({
+         name: "Apple",
+         calories: 200
+       })
+        .end((err, response) => {
+          response.should.have.status(400);
+        });
+        done();
+     });
+
+    it('should return 422 if patch does not include all attributes', done => {
+     chai.request(server)
+       .patch('/api/v1/foods/1')
+       .send({
+         name: "Apple"
+       })
+        .end((err, response) => {
+          response.should.have.status(422);
+        });
+        done();
+     });
+  });
+  
 });
