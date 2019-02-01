@@ -23,6 +23,8 @@ app.get('/', (request, response) => {
   response.send('Welcome to the Quantified Self API');
 });
 
+// ---------------FOODS ENDPOINT-----------------
+
 app.get('/api/v1/foods', (request, response) => {
   database('foods').select()
   .then((foods) => {
@@ -98,6 +100,13 @@ app.get('/api/v1/meals', (request, response) => {
     response.status(500).json({ error });
   });
 });
+
+app.get('/api/v1/meals/:meals_id/foods', (request, response) => {
+  database('meal_foods').where('id', request.params.meal_id).select()
+  .then((meal_foods) => {
+
+  })
+})
 
 
 app.listen(app.get('port'), () => {

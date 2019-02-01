@@ -16,8 +16,7 @@
     "mocha": "^5.2.0"
   },
   "scripts": {
-    "test": "mocha --exit",
-    "test-with-coverage": "nyc --reporter=text mocha --exit"
+    "test": "nyc --reporter=text mocha --exit"
   },
   "repository": {
     "type": "git",

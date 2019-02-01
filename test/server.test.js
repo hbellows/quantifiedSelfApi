@@ -181,5 +181,32 @@ describe('API Routes', () => {
        });
      });
   
-  
+     describe('GET /api/v1/meals/:meal_id/foods', () => {
+      it('should return a meal object with an nested array of food objects', done => {
+         chai.request(server)
+           .get('/api/v1/meals/1/foods')
+           .end((err, response) => {
+             response.should.have.status(200);
+             response.should.be.json;
+             response.body.should.be.a('object');
+             response.body.should.have.property('id');
+             response.body.should.have.property('name');
+             response.body.should.have.property('foods');
+             response.body.foods[0].should.have.property('id');
+             response.body.foods[0].should.have.property('name');
+             response.body.foods[0].should.have.property('calories');
+             done();
+           });
+         });
+         
+       it('should return 404 if meal id does not exist', done => {
+         chai.request(server)
+          .get('/api/v1/meals/500/foods')
+          .end((err, response) => {
+            response.should.have.status(404);
+            done();
+           });
+         });
+       })
+
 });
