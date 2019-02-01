@@ -193,4 +193,23 @@ describe('API Routes', () => {
     });
   });
 
+
+  // -----------------MEALS TESTS-----------------------
+
+  describe('GET /api/v1/meals', () => {
+    it('should return all meals', done => {
+       chai.request(server)
+         .get('/api/v1/meals')
+         .end((err, response) => {
+           response.should.have.status(200);
+           response.should.be.json;
+           response.body.should.be.a('array');
+           response.body.length.should.equal(4);
+           response.body[0].should.have.property('name');
+           response.body[0].name.should.equal('Breakfast');
+           response.body[3].name.should.equal('Dinner');
+           done();
+         });
+       });
+     });
 });
