@@ -6,6 +6,10 @@ const environment = process.env.NODE_ENV || 'development';
 const configuration = require('./knexfile')[environment];
 const database = require('knex')(configuration);
 
+const Meals = require('./models/meals')
+
+pry = require('pryjs')
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.set('port', process.env.PORT || 3000);
@@ -14,6 +18,7 @@ app.locals.title = 'Quantified Self';
 // CORS Configuration
 app.use(function(req, res, next) {
   res.header("Access-Control-Allow-Origin", "*");
+  res.header("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE");
   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
   next();
 });
@@ -73,13 +78,45 @@ app.patch('/api/v1/foods/:id', (request, response) => {
     });
 });
 
+app.post('/api/v1/foods', (request, response) => {
+  const food = request.body;
+
+  for (let requiredParameter of ['name', 'calories']) {
+    if (!food[requiredParameter]) {
+      return response
+        .status(422)
+        .send({ error: `Expected format: { name: <String>, calories: <String> }. You're missing a "${requiredParameter}" property.` });
+    }
+  }
+
+  database('foods')
+    .where('name', food.name)
+    .count()
+    .then(count => {
+      console.log(count)
+      if (!(count[0]['count'] == "0")) {
+        response.status(409).json({
+          error: 'Duplicate entries are not permitted.'
+        });
+      } else {
+        database('foods').insert(food, 'id')
+          .then(food => {
+            response.status(201).json({ id: food[0] })
+          })
+          .catch(error => {
+            response.status(500).json({ error });
+          });
+      }
+    });
+});
+
+
 app.delete('/api/v1/foods/:id', (request, response) => {
   database('foods').where('id', request.params.id).del()
   .then(foods => {
     if (foods == 1) {
       response.status(204).json({success: true});
     } else {
-      eval(pry.it)
       response.status(404).json({ error });
     }
   })
@@ -92,21 +129,36 @@ app.delete('/api/v1/foods/:id', (request, response) => {
 // ----------------MEALS ENDPOINT------------------
 
 app.get('/api/v1/meals', (request, response) => {
-  database('meals').select()
-  .then((meals) => {
-    response.status(200).json(meals);
+  Meals.allMeals()
+  .then((data) => {
+    if (data.rowCount == 0) {
+      response.status(404)
+    }
+      data.rows.forEach((meal) => {
+          if (meal.foods[0].id === null) {
+            meal.foods = []
+          }
+      })
+    response.json(data.rows)
   })
-  .catch((error) => {
-    response.status(500).json({ error });
+})
+
+
+app.get('/api/v1/meals/:meals_id/foods', (request, response) => {
+  const mealId = request.params.meal_id
+  database.raw(
+    'SELECT * FROM foods' +
+    ' INNER JOIN meal_foods ON foods.id = meal_foods.food' +
+    ' WHERE meal_foods.meal = ?', [mealID]
+  )
+  .then((data) => {
+    if (data.rowCount == 0) {
+      response.status(404)
+    }
+    response.status(201).json(data['rows']);
   });
 });
 
-app.get('/api/v1/meals/:meals_id/foods', (request, response) => {
-  database('meal_foods').where('id', request.params.meal_id).select()
-  .then((meal_foods) => {
-
-  })
-})
 
 
 app.listen(app.get('port'), () => {
