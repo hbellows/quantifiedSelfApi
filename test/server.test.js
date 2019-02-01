@@ -160,8 +160,8 @@ describe('API Routes', () => {
           response.should.have.status(201);
           response.body.should.be.a('object');
           response.body.should.have.property('id');
-          done();
         });
+        done();
     });
     it('should not duplicate foods', done => {
       chai.request(server)
@@ -197,7 +197,7 @@ describe('API Routes', () => {
   // -----------------MEALS TESTS-----------------------
 
   describe('GET /api/v1/meals', () => {
-    it('should return all meals', done => {
+    it('should return an array of all meals with their associated foods', done => {
        chai.request(server)
          .get('/api/v1/meals')
          .end((err, response) => {
@@ -205,11 +205,42 @@ describe('API Routes', () => {
            response.should.be.json;
            response.body.should.be.a('array');
            response.body.length.should.equal(4);
+           response.body[0].should.have.property('id');
            response.body[0].should.have.property('name');
-           response.body[0].name.should.equal('Breakfast');
-           response.body[3].name.should.equal('Dinner');
-           done();
-         });
+           response.body[0].foods[0].should.have.property('id');
+           response.body[0].foods[0].should.have.property('name');
+           response.body[0].foods[0].should.have.property('calories');
+          });
+          done();
        });
-     });
+   })
+  
+  xdescribe('GET /api/v1/meals/:meal_id/foods', () => {
+    it('should return a meal with it\s associated foods', done => {
+        chai.request(server)
+          .get('/api/v1/meals/1/foods')
+          .end((err, response) => {
+            response.should.have.status(200);
+            response.should.be.json;
+            response.body.should.be.a('object');
+            response.body.should.have.property('id');
+            response.body.should.have.property('name');
+            response.body.should.have.property('foods');
+            response.body.foods[0].should.have.property('id');
+            response.body.foods[0].should.have.property('name');
+            response.body.foods[0].should.have.property('calories');
+            done();
+          });
+        });
+      
+    xit('should return 404 if meal id does not exist', done => {
+      chai.request(server)
+      .get('/api/v1/meals/5/foods')
+      .end((err, response) => {
+        response.should.have.status(404);
+        done();
+        });
+      });
+    })
+
 });

@@ -13,11 +13,12 @@
   "devDependencies": {
     "chai": "^4.2.0",
     "chai-http": "^4.2.1",
-    "mocha": "^5.2.0"
+    "mocha": "^5.2.0",
+    "nyc": "^13.1.0",
+    "pryjs": "^1.0.3"
   },
   "scripts": {
-    "test": "mocha --exit",
-    "test-with-coverage": "nyc --reporter=text mocha --exit"
+    "test": "nyc --reporter=text mocha --exit"
   },
   "repository": {
     "type": "git",
