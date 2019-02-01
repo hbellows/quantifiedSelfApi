@@ -145,18 +145,50 @@ describe('API Routes', () => {
      });
   });
 
+  describe("CREATE /api/v1/foods", () => {
+    it('should create a new food', done => {
+      chai.request(server)
+      // Notice the change in the verb
+        .post('/api/v1/foods')
+        // Here is the information sent in the body or the request
+        .send({
+          name: 'NewFood',
+          calories: 200
+        })
+        .end((err, response) => {
+          // Different status here
+          response.should.have.status(201);
+          response.body.should.be.a('object');
+          response.body.should.have.property('id');
+          done();
+        });
+    });
+    it('should not duplicate foods', done => {
+      chai.request(server)
+        .post('/api/v1/foods')
+        .send({
+          name: 'Banana',
+          calories: 200
+        }).end((err, response) => {
+          response.should.have.status(409);
+          response.body.error.should.equal('Duplicate entries are not permitted.')
+        });
+        done();
+    });
+  });
+
   describe('DELETE /api/v1/foods/1', () => {
     it('should delete a specific food', done => {
       chai.request(server)
         .delete('/api/v1/foods/1')
         .end((err, response) => {
           response.should.have.status(204);
-      });
+        });
       chai.request(server)
         .get('/api/v1/foods/1')
         .end((err, response) => {
           response.should.have.status(404);
-        done();
+          done();
         });
     });
   });
@@ -180,6 +212,4 @@ describe('API Routes', () => {
          });
        });
      });
-  
-  
 });

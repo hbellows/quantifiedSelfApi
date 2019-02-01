@@ -72,6 +72,39 @@ app.patch('/api/v1/foods/:id', (request, response) => {
     });
 });
 
+app.post('/api/v1/foods', (request, response) => {
+  const food = request.body;
+
+  for (let requiredParameter of ['name', 'calories']) {
+    if (!food[requiredParameter]) {
+      return response
+        .status(422)
+        .send({ error: `Expected format: { name: <String>, calories: <String> }. You're missing a "${requiredParameter}" property.` });
+    }
+  }
+
+  database('foods')
+    .where('name', food.name)
+    .count()
+    .then(count => {
+      console.log(count)
+      if (!(count[0]['count'] == "0")) {
+        response.status(409).json({
+          error: 'Duplicate entries are not permitted.'
+        });
+      } else {
+        database('foods').insert(food, 'id')
+          .then(food => {
+            response.status(201).json({ id: food[0] })
+          })
+          .catch(error => {
+            response.status(500).json({ error });
+          });
+      }
+    });
+});
+
+
 app.delete('/api/v1/foods/:id', (request, response) => {
   database('foods').where('id', request.params.id).del()
   .then(foods => {
