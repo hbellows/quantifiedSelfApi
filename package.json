@@ -18,7 +18,7 @@
     "pryjs": "^1.0.3"
   },
   "scripts": {
-    "test": "nyc --reporter=text mocha --timeout(10000) --exit"
+    "test": "nyc --reporter=text mocha --exit"
   },
   "repository": {
     "type": "git",
