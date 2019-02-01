@@ -6,7 +6,7 @@ services:
 before_script:
  - psql -c 'create database quantified_self;' -U postgres
  script:
-  - istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- -R spec && codecov
+  # - istanbul cover ./node_modules/mocha/bin/_mocha --report lcovonly -- -R spec && codecov
   - codecov
 cache:
   directories:
