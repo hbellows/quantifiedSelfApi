@@ -224,9 +224,9 @@ describe('API Routes', () => {
           response.body[0].foods[0].name.should.equal('Banana')
           response.body[0].foods[0].should.have.property('calories')
           response.body[0].foods[0].calories.should.equal(150)
-          done();
         });
-    });
+        done();
+      });
   });
   
   describe('GET /api/v1/meals/:meal_id/foods', () => {
@@ -245,8 +245,8 @@ describe('API Routes', () => {
         response.body.foods[0].name.should.equal('Banana')
         response.body.foods[0].should.have.property('calories')
         response.body.foods[0].calories.should.equal(150)
-        done();
       });
+      done();
     });
     
     it('should return 404 if meal id does not exist', done => {
