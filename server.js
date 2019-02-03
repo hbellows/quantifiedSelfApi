@@ -6,8 +6,6 @@ const environment = process.env.NODE_ENV || 'development';
 const configuration = require('./knexfile')[environment];
 const database = require('knex')(configuration);
 
-const Meals = require('./models/meals')
-
 pry = require('pryjs')
 
 app.use(bodyParser.json());
@@ -113,18 +111,16 @@ app.post('/api/v1/foods', (request, response) => {
 
 app.delete('/api/v1/foods/:id', (request, response) => {
   database('foods').where('id', request.params.id).del()
-  .then(foods => {
-    if (foods == 1) {
-      response.status(204).json({success: true});
-    } else {
-      response.status(404).json({ error });
-    }
-  })
-  .catch((error) => {
-    response.status(500).json({ error });
-  });
+    .then(() => {
+      response.status(204).send(`Successfully deleted food with id ${request.params.id}`)
+    })
+    .catch(error => {
+      response.status(404).json({ error })
+    })
+    .catch(error => {
+      response.status(500).json({ error });
+  })  
 });
-
 
 // ----------------MEALS ENDPOINT------------------
 
@@ -143,7 +139,7 @@ app.get('/api/v1/meals', (request, response) => {
     .catch((error) => {
       response.status(404).json({ error })
     })
-})
+});
 
 
 app.get('/api/v1/meals/:meal_id/foods', (request, response) => {
@@ -163,7 +159,7 @@ app.get('/api/v1/meals/:meal_id/foods', (request, response) => {
     .catch((error) => {
       response.status(404).json({ error })
     })
-})
+});
 
 
 
