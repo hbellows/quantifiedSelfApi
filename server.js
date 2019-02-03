@@ -116,11 +116,11 @@ app.delete('/api/v1/foods/:id', (request, response) => {
       response.status(200).send(`Successfully deleted food with id ${request.params.id}`)
       }
       else {
-        response.status(404).json({ error })
+        response.sendStatus(500);
       }
     })
     .catch(error => {
-      response.status(500).json({ error });
+      response.sendStatus(500);
   })  
 });
 
