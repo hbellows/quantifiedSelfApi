@@ -143,7 +143,6 @@ app.get('/api/v1/meals', (request, response) => {
   })
 });
 
-
 app.get('/api/v1/meals/:meal_id/foods', (request, response) => {
   let id = request.params.meal_id
   database.raw(`
@@ -156,12 +155,19 @@ app.get('/api/v1/meals/:meal_id/foods', (request, response) => {
     WHERE meals.id = ${id}
     GROUP BY meals.id`)
     .then((foods) => {
-      response.status(200).json(foods.rows[0])
+      if (foods.rows.length == 0) {
+        response.status(404).send(`Could not find meal with id ${id}`)
+      }
+      else {
+        response.status(200).json(foods.rows[0])
+      }
     })
     .catch((error) => {
-      response.status(404).json({ error })
+      response.status(500).json({ error })
     })
 });
+
+
 
 
 
