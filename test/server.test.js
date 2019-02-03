@@ -255,7 +255,7 @@ describe('API Routes', () => {
     
     it('should return 404 if meal id does not exist', done => {
       chai.request(server)
-      .get('/api/v1/meals/500/foods')
+      .get('/api/v1/meals/5/foods')
       .end((err, response) => {
         response.should.have.status(404);
       });
