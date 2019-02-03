@@ -228,8 +228,8 @@ describe('API Routes', () => {
           response.body[0].foods[0].name.should.equal('Banana')
           response.body[0].foods[0].should.have.property('calories')
           response.body[0].foods[0].calories.should.equal(150)
+          done();
         });
-        done();
       });
   });
   
