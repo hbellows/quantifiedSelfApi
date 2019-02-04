@@ -289,6 +289,24 @@ describe('API Routes', () => {
         done()
       });
     });
+
+    it('should return 400 if meal can\'t be found', done => {
+      chai.request(server)
+      .post(`/api/v1/meals/5/foods/10`)
+      .end((err, response) => {
+        response.should.have.status(400)
+        done()
+      })
+    });
+
+    it('should return 400 if food can\'t be found', done => {
+      chai.request(server)
+      .post(`/api/v1/meals/4/foods/100`)
+      .end((err, response) => {
+        response.should.have.status(400)
+        done()
+      })
+    });
   });
   
 });
