@@ -207,7 +207,7 @@ describe('API Routes', () => {
 
   // -----------------MEALS TESTS-----------------------
 
-  describe('GET /api/v1/meals', () => {
+  xdescribe('GET /api/v1/meals', () => {
     it('should return all meals', done => {
       chai.request(server)
         .get('/api/v1/meals')
@@ -234,7 +234,7 @@ describe('API Routes', () => {
       });
   });
   
-  describe('GET /api/v1/meals/:meal_id/foods', () => {
+  xdescribe('GET /api/v1/meals/:meal_id/foods', () => {
     it('should return all foods associated with a meal', done => {
       chai.request(server)
       .get('/api/v1/meals/1/foods')
