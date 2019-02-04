@@ -113,14 +113,15 @@ app.delete('/api/v1/foods/:id', (request, response) => {
   database('foods').where('id', request.params.id).del()
     .then((foods) => {
       if (foods == 1) {
-      response.status(200).send(`Successfully deleted food with id ${request.params.id}`)
-      }
-      else {
+      response.status(200).send({message: `Successfully deleted food with id ${request.params.id}`})
+      // eval(pry.it)
+    }
+    else {
         response.sendStatus(500);
       }
     })
     .catch(error => {
-      response.sendStatus(500);
+      response.sendStatus(404);
   })  
 });
 
@@ -156,7 +157,7 @@ app.get('/api/v1/meals/:meal_id/foods', (request, response) => {
     GROUP BY meals.id`)
     .then((foods) => {
       if (foods.rows.length == 0) {
-        response.status(404).send(`Could not find meal with id ${id}`)
+        response.status(404).send({error: `Could not find meal with id ${id}`})
       }
       else {
         response.status(200).json(foods.rows[0])

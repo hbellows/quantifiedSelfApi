@@ -178,17 +178,18 @@ describe('API Routes', () => {
 
     describe('DELETE /api/v1/foods/1', () => {
       it('should delete a specific food', done => {
+        let id = 1
         chai.request(server)
-          .delete('/api/v1/foods/1')
+          .delete(`/api/v1/foods/${id}`)
           .end((err, response) => {
             response.should.have.status(200);
-            // response.body.error.should.equal(`Successfully deleted food with id ${request.params.id}`);
+            response.body.message.should.equal(`Successfully deleted food with id ${id}`);
             chai.request(server)
             .get('/api/v1/foods/1')
             .end((err, response) => {
               response.should.have.status(404);
-            done();
             });
+            done();
           });
         });
 
@@ -254,12 +255,14 @@ describe('API Routes', () => {
     });
     
     it('should return 404 if meal id does not exist', done => {
+      let meal_id = 5
       chai.request(server)
-      .get('/api/v1/meals/5/foods')
+      .get(`/api/v1/meals/${meal_id}/foods`)
       .end((err, response) => {
         response.should.have.status(404);
+        response.body.error.should.equal(`Could not find meal with id ${meal_id}`);
+        done()
       });
-      done()
     });
   })
   
