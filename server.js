@@ -113,8 +113,7 @@ app.delete('/api/v1/foods/:id', (request, response) => {
   database('foods').where('id', request.params.id).del()
     .then((foods) => {
       if (foods == 1) {
-      response.status(200).send({message: `Successfully deleted food with id ${request.params.id}`})
-      // eval(pry.it)
+      response.status(200).send({ message: `Successfully deleted food with id ${request.params.id}` })
     }
     else {
         response.sendStatus(500);
