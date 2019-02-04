@@ -140,7 +140,7 @@ app.get('/api/v1/meals', (request, response) => {
     })
     .catch((error) => {
       response.sendStatus(404).json({ error })
-  })
+    })
 });
 
 app.get('/api/v1/meals/:meal_id/foods', (request, response) => {
