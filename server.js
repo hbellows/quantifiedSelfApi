@@ -119,9 +119,9 @@ app.delete('/api/v1/foods/:id', (request, response) => {
         response.sendStatus(500);
       }
     })
-    .catch(error => {
-      response.sendStatus(404);
-  })  
+  //   .catch(error => {
+  //     response.sendStatus(404);
+  // })  
 });
 
 // ----------------MEALS ENDPOINT------------------
@@ -139,7 +139,7 @@ app.get('/api/v1/meals', (request, response) => {
       response.status(200).json(meals.rows)
     })
     .catch((error) => {
-      response.status(404).json({ error })
+      response.sendStatus(404).json({ error })
   })
 });
 
