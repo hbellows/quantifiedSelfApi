@@ -119,9 +119,9 @@ app.delete('/api/v1/foods/:id', (request, response) => {
         response.sendStatus(500);
       }
     })
-  //   .catch(error => {
-  //     response.sendStatus(404);
-  // })  
+    .catch(() => {
+      response.sendStatus(404);
+  })  
 });
 
 // ----------------MEALS ENDPOINT------------------
@@ -195,8 +195,35 @@ app.post('/api/v1/meals/:meal_id/foods/:id', (request, response) => {
     .catch((error) => {
       response.status(400).json({ error })
     })
-})
+});
 
+app.delete('/api/v1/meals/:meal_id/foods/:id', (request,response) => {
+  const mealId = request.params.meal_id
+  const foodId = request.params.id
+
+  let targetMeal
+  let targetFood
+
+  database('meals').where('id', mealId).first()
+    .then(meal => {
+      targetMeal = meal
+      return database('foods').where('id', foodId).first()
+    })
+    .then(food => {
+      targetFood = food
+    })
+    .then(() => {
+      if (targetMeal && targetFood) {
+        return database('meal_foods').where('meal_foods.meal_id', mealId).where('meal_foods.food_id', foodId).del()
+      }
+    })
+    .then(() => {
+      response.status(200).json({ message: `Successfully removed ${targetFood.name} from ${targetMeal.name}.` })
+    })
+    .catch((error) => {
+      response.status(400).json({ error })
+    })
+});
 
 app.listen(app.get('port'), () => {
   console.log(`${app.locals.title} is running on ${app.get('port')}.`);
