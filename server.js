@@ -113,16 +113,15 @@ app.delete('/api/v1/foods/:id', (request, response) => {
   database('foods').where('id', request.params.id).del()
     .then((foods) => {
       if (foods == 1) {
-      response.status(200).send({message: `Successfully deleted food with id ${request.params.id}`})
-      // eval(pry.it)
+      response.status(200).send({ message: `Successfully deleted food with id ${request.params.id}` })
     }
     else {
         response.sendStatus(500);
       }
     })
-    .catch(error => {
-      response.sendStatus(404);
-  })  
+  //   .catch(error => {
+  //     response.sendStatus(404);
+  // })  
 });
 
 // ----------------MEALS ENDPOINT------------------
@@ -140,12 +139,12 @@ app.get('/api/v1/meals', (request, response) => {
       response.status(200).json(meals.rows)
     })
     .catch((error) => {
-      response.status(404).json({ error })
-  })
+      response.sendStatus(404).json({ error })
+    })
 });
 
 app.get('/api/v1/meals/:meal_id/foods', (request, response) => {
-  let id = request.params.meal_id
+  const id = request.params.meal_id
   database.raw(`
     SELECT meals.id, meals.name, array_to_json
     (array_agg(json_build_object('id', foods.id, 'name', foods.name, 'calories', foods.calories)))
@@ -154,7 +153,8 @@ app.get('/api/v1/meals/:meal_id/foods', (request, response) => {
     JOIN meal_foods ON meals.id = meal_foods.meal_id
     JOIN foods ON meal_foods.food_id = foods.id
     WHERE meals.id = ${id}
-    GROUP BY meals.id`)
+    GROUP BY meals.id`
+    )
     .then((foods) => {
       if (foods.rows.length == 0) {
         response.status(404).send({error: `Could not find meal with id ${id}`})
@@ -169,7 +169,33 @@ app.get('/api/v1/meals/:meal_id/foods', (request, response) => {
 });
 
 
+app.post('/api/v1/meals/:meal_id/foods/:id', (request, response) => {
+  const mealId = request.params.meal_id
+  const foodId = request.params.id
 
+  let targetMeal
+  let targetFood
+
+  database('meals').where('id', mealId).first()
+    .then(meal => {
+      targetMeal = meal
+      return database('foods').where('id', foodId).first()
+    })
+    .then(food => {
+      targetFood = food
+    })
+    .then(() => {
+      if (targetMeal && targetFood) {
+        return database('meal_foods').insert([{ food_id: foodId, meal_id: mealId }], 'id')
+      }
+    })
+    .then(() => {
+      response.status(201).json({ message: `Successfully added ${targetFood.name} to ${targetMeal.name}.` })
+    })
+    .catch((error) => {
+      response.status(400).json({ error })
+    })
+})
 
 
 app.listen(app.get('port'), () => {

@@ -207,7 +207,7 @@ describe('API Routes', () => {
 
   // -----------------MEALS TESTS-----------------------
 
-  xdescribe('GET /api/v1/meals', () => {
+  describe('GET /api/v1/meals', () => {
     it('should return all meals', done => {
       chai.request(server)
         .get('/api/v1/meals')
@@ -234,7 +234,7 @@ describe('API Routes', () => {
       });
   });
   
-  xdescribe('GET /api/v1/meals/:meal_id/foods', () => {
+  describe('GET /api/v1/meals/:meal_id/foods', () => {
     it('should return all foods associated with a meal', done => {
       chai.request(server)
       .get('/api/v1/meals/1/foods')
@@ -265,6 +265,49 @@ describe('API Routes', () => {
       });
     });
   })
+
+  describe('POST /api/v1/meals/:meal_id/foods/:id', () => {
+    let meal = 'Dinner'
+    let food = 'Taquitos'
+    it('should add a food to a meal', done => {
+      chai.request(server)
+      .post(`/api/v1/foods`)
+      .send ({
+        name: 'Taquitos',
+        calories: 500
+      })
+      .end((err, response) => {
+        response.should.have.status(201)
+        response.body.id.should.equal(10)
+      });
+
+      chai.request(server)
+      .post(`/api/v1/meals/4/foods/10`)
+      .end((err, response) => {
+        response.should.have.status(201);
+        response.body.message.should.equal(`Successfully added ${food} to ${meal}.`)
+        done()
+      });
+    });
+
+    it('should return 400 if meal can\'t be found', done => {
+      chai.request(server)
+      .post(`/api/v1/meals/5/foods/10`)
+      .end((err, response) => {
+        response.should.have.status(400)
+        done()
+      })
+    });
+
+    it('should return 400 if food can\'t be found', done => {
+      chai.request(server)
+      .post(`/api/v1/meals/4/foods/100`)
+      .end((err, response) => {
+        response.should.have.status(400)
+        done()
+      })
+    });
+  });
   
 });
 
