@@ -34,30 +34,7 @@ app.use('/api/v1/meals', meals)
 
 
 
-app.get('/api/v1/meals/:meal_id/foods', (request, response) => {
-  const id = request.params.meal_id
-  database.raw(`
-    SELECT meals.id, meals.name, array_to_json
-    (array_agg(json_build_object('id', foods.id, 'name', foods.name, 'calories', foods.calories)))
-    AS foods
-    FROM meals
-    JOIN meal_foods ON meals.id = meal_foods.meal_id
-    JOIN foods ON meal_foods.food_id = foods.id
-    WHERE meals.id = ${id}
-    GROUP BY meals.id`
-    )
-    .then((foods) => {
-      if (foods.rows.length == 0) {
-        response.status(404).send({error: `Could not find meal with id ${id}`})
-      }
-      else {
-        response.status(200).json(foods.rows[0])
-      }
-    })
-    .catch((error) => {
-      response.status(500).json({ error })
-    })
-});
+
 
 
 app.post('/api/v1/meals/:meal_id/foods/:id', (request, response) => {
