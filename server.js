@@ -6,7 +6,7 @@ const environment = process.env.NODE_ENV || 'development';
 const configuration = require('./knexfile')[environment];
 const database = require('knex')(configuration);
 
-// pry = require('pryjs')
+const foods = require('./lib/routes/api/v1/foods')
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -28,53 +28,14 @@ app.get('/', (request, response) => {
 
 // ---------------FOODS ENDPOINT-----------------
 
-app.get('/api/v1/foods', (request, response) => {
-  database('foods').select()
-  .then((foods) => {
-    response.status(200).json(foods);
-  })
-  .catch((error) => {
-    response.status(500).json({ error });
-  });
-});
+app.use('/api/v1/foods', foods)
 
-app.get('/api/v1/foods/:id', (request, response) => {
-  database('foods').where('id', request.params.id).select()
-    .then(foods => {
-      if (foods.length) {
-        response.status(200).json(foods);
-      } else {
-        response.status(404).json({
-          error: `Could not find food with id ${request.params.id}`
-        });
-      }
-    })
-    .catch(error => {
-      response.status(500).json({ error });
-    });
-});
-
-app.patch('/api/v1/foods/:id', (request, response) => {
-  const food = request.body;
-
-  for (let requiredParameter of ['name', 'calories']) {
-    if (!food[requiredParameter]) {
-      return response
-        .status(422)
-        .send({ error: `Expected format: { name: <String>, calories: <String> }. You're missing a "${requiredParameter}" property.` });
-    }
-  }
-
-  database('foods').where('id', request.params.id).update(food)
-    .then(foods => {
-      if (foods == 1) {
-        response.status(201).json({"food": food });
-      }
-    })
-    .catch((error) => {
-      response.status(400).json({ error });
-    });
-});
+// app.get('/api/v1/foods', foods)
+// app.get('/api/v1/foods/:id', foods)
+// app.patch('/api/v1/foods/:id', foods)
+// app.post('/api/v1/foods', foods)
+// app.delete('/api/v1/foods/:id', foods)
+// app.post('/api/v1/foods', foods)
 
 app.post('/api/v1/foods', (request, response) => {
   const food = request.body;
