@@ -7,6 +7,7 @@ const configuration = require('./knexfile')[environment];
 const database = require('knex')(configuration);
 
 const foods = require('./lib/routes/api/v1/foods')
+const meals = require('./lib/routes/api/v1/meals')
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -21,88 +22,17 @@ app.use(function(req, res, next) {
   next();
 });
 
-// Routes
+// Client Routes
 app.get('/', (request, response) => {
   response.send('Welcome to the Quantified Self API');
 });
 
-// ---------------FOODS ENDPOINT-----------------
-
+// API Endpoints
 app.use('/api/v1/foods', foods)
-
-// app.get('/api/v1/foods', foods)
-// app.get('/api/v1/foods/:id', foods)
-// app.patch('/api/v1/foods/:id', foods)
-// app.post('/api/v1/foods', foods)
-// app.delete('/api/v1/foods/:id', foods)
-// app.post('/api/v1/foods', foods)
-
-// app.post('/api/v1/foods', (request, response) => {
-//   const food = request.body;
-
-//   for (let requiredParameter of ['name', 'calories']) {
-//     if (!food[requiredParameter]) {
-//       return response
-//         .status(422)
-//         .send({ error: `Expected format: { name: <String>, calories: <String> }. You're missing a "${requiredParameter}" property.` });
-//     }
-//   }
-
-//   database('foods')
-//     .where('name', food.name)
-//     .count()
-//     .then(count => {
-//       console.log(count)
-//       if (!(count[0]['count'] == "0")) {
-//         response.status(409).json({
-//           error: 'Duplicate entries are not permitted.'
-//         });
-//       } else {
-//         database('foods').insert(food, 'id')
-//           .then(food => {
-//             response.status(201).json({ id: food[0] })
-//           })
-//           .catch(error => {
-//             response.status(500).json({ error });
-//           });
-//       }
-//     });
-// });
+app.use('/api/v1/meals', meals)
 
 
-// app.delete('/api/v1/foods/:id', (request, response) => {
-//   database('foods').where('id', request.params.id).del()
-//     .then((foods) => {
-//       if (foods == 1) {
-//       response.status(200).send({ message: `Successfully deleted food with id ${request.params.id}` })
-//     }
-//     else {
-//         response.sendStatus(500);
-//       }
-//     })
-//     .catch(() => {
-//       response.sendStatus(404);
-//   })  
-// });
 
-// ----------------MEALS ENDPOINT------------------
-
-app.get('/api/v1/meals', (request, response) => {
-  database.raw(`
-    SELECT meals.id, meals.name, array_to_json
-    (array_agg(json_build_object('id', foods.id, 'name', foods.name, 'calories', foods.calories)))
-    AS foods
-    FROM meals
-    JOIN meal_foods ON meals.id = meal_foods.meal_id
-    JOIN foods ON meal_foods.food_id = foods.id
-    GROUP BY meals.id`)
-    .then((meals) => {
-      response.status(200).json(meals.rows)
-    })
-    .catch((error) => {
-      response.sendStatus(404).json({ error })
-    })
-});
 
 app.get('/api/v1/meals/:meal_id/foods', (request, response) => {
   const id = request.params.meal_id
