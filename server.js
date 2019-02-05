@@ -37,6 +37,53 @@ app.use('/api/v1/foods', foods)
 // app.delete('/api/v1/foods/:id', foods)
 // app.post('/api/v1/foods', foods)
 
+app.post('/api/v1/foods', (request, response) => {
+  const food = request.body;
+
+  for (let requiredParameter of ['name', 'calories']) {
+    if (!food[requiredParameter]) {
+      return response
+        .status(422)
+        .send({ error: `Expected format: { name: <String>, calories: <String> }. You're missing a "${requiredParameter}" property.` });
+    }
+  }
+
+  database('foods')
+    .where('name', food.name)
+    .count()
+    .then(count => {
+      console.log(count)
+      if (!(count[0]['count'] == "0")) {
+        response.status(409).json({
+          error: 'Duplicate entries are not permitted.'
+        });
+      } else {
+        database('foods').insert(food, 'id')
+          .then(food => {
+            response.status(201).json({ id: food[0] })
+          })
+          .catch(error => {
+            response.status(500).json({ error });
+          });
+      }
+    });
+});
+
+
+app.delete('/api/v1/foods/:id', (request, response) => {
+  database('foods').where('id', request.params.id).del()
+    .then((foods) => {
+      if (foods == 1) {
+      response.status(200).send({ message: `Successfully deleted food with id ${request.params.id}` })
+    }
+    else {
+        response.sendStatus(500);
+      }
+    })
+    .catch(() => {
+      response.sendStatus(404);
+  })  
+});
 
 // ----------------MEALS ENDPOINT------------------
 
@@ -109,8 +156,35 @@ app.post('/api/v1/meals/:meal_id/foods/:id', (request, response) => {
     .catch((error) => {
       response.status(400).json({ error })
     })
-})
+});
 
+app.delete('/api/v1/meals/:meal_id/foods/:id', (request,response) => {
+  const mealId = request.params.meal_id
+  const foodId = request.params.id
+
+  let targetMeal
+  let targetFood
+
+  database('meals').where('id', mealId).first()
+    .then(meal => {
+      targetMeal = meal
+      return database('foods').where('id', foodId).first()
+    })
+    .then(food => {
+      targetFood = food
+    })
+    .then(() => {
+      if (targetMeal && targetFood) {
+        return database('meal_foods').where('meal_foods.meal_id', mealId).where('meal_foods.food_id', foodId).del()
+      }
+    })
+    .then(() => {
+      response.status(200).json({ message: `Successfully removed ${targetFood.name} from ${targetMeal.name}.` })
+    })
+    .catch((error) => {
+      response.status(400).json({ error })
+    })
+});
 
 app.listen(app.get('port'), () => {
   console.log(`${app.locals.title} is running on ${app.get('port')}.`);

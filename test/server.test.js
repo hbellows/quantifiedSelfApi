@@ -267,15 +267,19 @@ describe('API Routes', () => {
   })
 
   describe('POST /api/v1/meals/:meal_id/foods/:id', () => {
-    let meal = 'Dinner'
-    let food = 'Taquitos'
+    let targetMeal = {
+      name: 'Dinner'
+    }
+
+    let targetFood = {
+      name: 'Taquitos',
+      calories: 500
+    }
+
     it('should add a food to a meal', done => {
       chai.request(server)
       .post(`/api/v1/foods`)
-      .send ({
-        name: 'Taquitos',
-        calories: 500
-      })
+      .send (targetFood)
       .end((err, response) => {
         response.should.have.status(201)
         response.body.id.should.equal(10)
@@ -285,7 +289,7 @@ describe('API Routes', () => {
       .post(`/api/v1/meals/4/foods/10`)
       .end((err, response) => {
         response.should.have.status(201);
-        response.body.message.should.equal(`Successfully added ${food} to ${meal}.`)
+        response.body.message.should.equal(`Successfully added ${targetFood.name} to ${targetMeal.name}.`);
         done()
       });
     });
@@ -308,6 +312,44 @@ describe('API Routes', () => {
       })
     });
   });
-  
-});
 
+  describe('DELETE /api/v1/meals/:meal_id/foods/:id', () => {
+    let targetMeal = {
+      name: 'Breakfast'
+    }
+
+    let targetFood = {
+      name: 'Banana',
+      calories: 150
+    }
+
+    it('should delete the food from a meal', done => {
+      chai.request(server)
+        .delete('/api/v1/meals/1/foods/1')
+        .end((error, response) => {
+          response.should.have.status(200)
+          response.body.message.should.equal(`Successfully removed ${targetFood.name} from ${targetMeal.name}.`)
+          done()
+        });
+    });
+
+    it('should return 400 if meal can\'t be found', done => {
+      chai.request(server)
+      .post(`/api/v1/meals/5/foods/10`)
+      .end((err, response) => {
+        response.should.have.status(400)
+        done()
+      });
+    });
+
+    it('should return 400 if food can\'t be found', done => {
+      chai.request(server)
+      .post(`/api/v1/meals/4/foods/100`)
+      .end((err, response) => {
+        response.should.have.status(400)
+        done()
+      })
+    });
+  })
+});
+  
