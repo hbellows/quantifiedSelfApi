@@ -31,21 +31,8 @@ app.get('/', (request, response) => {
 app.use('/api/v1/foods', foods)
 
 
-app.get('/api/v1/foods/:id', (request, response) => {
-  database('foods').where('id', request.params.id).select()
-    .then(foods => {
-      if (foods.length) {
-        response.status(200).json(foods);
-      } else {
-        response.status(404).json({
-          error: `Could not find food with id ${request.params.id}`
-        });
-      }
-    })
-    .catch(error => {
-      response.status(500).json({ error });
-    });
-});
+// app.use('/api/v1/foods/:id', foods)
+
 
 app.patch('/api/v1/foods/:id', (request, response) => {
   const food = request.body;
