@@ -52,7 +52,6 @@ app.post('/api/v1/foods', (request, response) => {
     .where('name', food.name)
     .count()
     .then(count => {
-      console.log(count)
       if (!(count[0]['count'] == "0")) {
         response.status(409).json({
           error: 'Duplicate entries are not permitted.'
@@ -82,14 +81,14 @@ app.delete('/api/v1/foods/:id', (request, response) => {
     })
     .catch(() => {
       response.sendStatus(404);
-  })  
+  })
 });
 
 // ----------------MEALS ENDPOINT------------------
 
 app.get('/api/v1/meals', (request, response) => {
   database.raw(`
-    SELECT meals.id, meals.name, array_to_json
+    SELECT meals.id, meals.name, meals.date, array_to_json
     (array_agg(json_build_object('id', foods.id, 'name', foods.name, 'calories', foods.calories)))
     AS foods
     FROM meals
@@ -102,6 +101,45 @@ app.get('/api/v1/meals', (request, response) => {
     .catch((error) => {
       response.sendStatus(404).json({ error })
     })
+});
+
+app.post('/api/v1/meals', (request, response) => {
+  const meal = request.body
+
+  for (let requiredParameter of ['name', 'date']) {
+    if (!meal[requiredParameter]) {
+      return response
+        .status(422)
+        .send({ error: `Expected format: { name: <String>, date: <yyyy-mm-dd> }. You're missing a "${requiredParameter}" property.` });
+    }
+  }
+
+  database.raw(`
+    SELECT count(meals)
+      AS count
+      FROM meals
+      WHERE name = '${meal.name}'
+      AND meals.date = '${meal.date}'
+    `)
+    .then(result => {
+      // var count = response[]
+      console.log(result)
+      console.log(result['rows'][0]['count']);
+      console.log(result['rows'][0]['count'] == "0");
+      if (!(result['rows'][0]['count'] == "0")) {
+        response.status(409).json({
+          error: 'Duplicate entries are not permitted.'
+        });
+      } else {
+        database('meals').insert(meal, 'id')
+          .then(meal => {
+            response.status(201).json({ id: meal[0] })
+          })
+          .catch(error => {
+            response.status(500).json({ error });
+          });
+      }
+    });
 });
 
 app.get('/api/v1/meals/:meal_id/foods', (request, response) => {

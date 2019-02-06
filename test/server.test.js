@@ -233,7 +233,44 @@ describe('API Routes', () => {
         });
       });
   });
-  
+
+  describe("CREATE /api/v1/meals", () => {
+    it('should create a new meal', done => {
+      chai.request(server)
+      // Notice the change in the verb
+        .post('/api/v1/meals')
+        // Here is the information sent in the body or the request
+        .send({
+          name: 'Breakfast',
+          date: new Date()
+        })
+        .end((err, response) => {
+          // Different status here
+          response.should.have.status(201);
+          response.body.should.be.a('object');
+          response.body.should.have.property('id');
+          done();
+        });
+    });
+
+    it('should not duplicate meals for a given date', done => {
+      var newDate = new Date(2012,12,12)
+      var newMeal = {name: 'Breakfast', date: newDate}
+      database('meals').insert(newMeal, 'id')
+      .then(response => {
+        console.log(response)
+        chai.request(server)
+        .post('/api/v1/meals')
+        .send(newMeal).end((err, response) => {
+          response.should.have.status(409);
+          response.body.error.should.equal('Duplicate entries are not permitted.')
+          done();
+        });
+      })
+      .catch(error => console.log(error));
+    });
+  });
+
   describe('GET /api/v1/meals/:meal_id/foods', () => {
     it('should return all foods associated with a meal', done => {
       chai.request(server)
@@ -253,7 +290,7 @@ describe('API Routes', () => {
         done();
       });
     });
-    
+
     it('should return 404 if meal id does not exist', done => {
       let meal_id = 5
       chai.request(server)
@@ -352,4 +389,3 @@ describe('API Routes', () => {
     });
   })
 });
-  
