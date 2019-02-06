@@ -100,7 +100,7 @@ app.get('/api/v1/meals', (request, response) => {
       response.status(200).json(meals.rows)
     })
     .catch((error) => {
-      response.sendStatus(404).json({ error })
+      response.status(404).json({ error })
     })
 });
 
