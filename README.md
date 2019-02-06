@@ -209,7 +209,10 @@ Suggestions for improvements or bug fixes can be made by forking and cloning a c
 
 ---
 ## Core Contributors
-This application is part of the Turing School's Module 4 Backend Engineering program.  This is pair project submitted by [William Fischer](@wfischer42) and [Harper Bellows](@hbellows).
+This application is part of the Turing School's Module 4 Backend Engineering curriculum.  
+It is a two week, full-stack paired [project](http://backend.turing.io/module4/projects/quantified_self/quantified_self_full_stack) that is being submitted by [William Fischer](@wfischer42) and [Harper Bellows](@hbellows).  
+
+The accompanying front end application can be found [here](https://github.com/wfischer42/quantified-self).
 
 ---
 ## Schema Design
