@@ -18,16 +18,15 @@ app.use(function(req, res, next) {
   next();
 });
 
-// Routes
+// Client Routes
 app.get('/', (request, response) => {
   response.send('Welcome to the Quantified Self API');
 });
 
-// API
 
+// API
 app.use('/api/v1/foods', foods)
 app.use('/api/v1/meals', meals)
-
 
 app.listen(app.get('port'), () => {
   console.log(`${app.locals.title} is running on ${app.get('port')}.`);
