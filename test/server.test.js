@@ -305,7 +305,8 @@ describe('API Routes', () => {
 
   describe('POST /api/v1/meals/:meal_id/foods/:id', () => {
     let targetMeal = {
-      name: 'Dinner'
+      name: 'Dinner',
+      date: new Date()
     }
 
     let targetFood = {

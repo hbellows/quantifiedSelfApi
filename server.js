@@ -26,65 +26,12 @@ app.get('/', (request, response) => {
   response.send('Welcome to the Quantified Self API');
 });
 
-// ---------------FOODS ENDPOINT-----------------
+// API
 
 app.use('/api/v1/foods', foods)
 
-// app.get('/api/v1/foods', foods)
-// app.get('/api/v1/foods/:id', foods)
-// app.patch('/api/v1/foods/:id', foods)
-// app.post('/api/v1/foods', foods)
-// app.delete('/api/v1/foods/:id', foods)
-// app.post('/api/v1/foods', foods)
 
-app.post('/api/v1/foods', (request, response) => {
-  const food = request.body;
-
-  for (let requiredParameter of ['name', 'calories']) {
-    if (!food[requiredParameter]) {
-      return response
-        .status(422)
-        .send({ error: `Expected format: { name: <String>, calories: <String> }. You're missing a "${requiredParameter}" property.` });
-    }
-  }
-
-  database('foods')
-    .where('name', food.name)
-    .count()
-    .then(count => {
-      if (!(count[0]['count'] == "0")) {
-        response.status(409).json({
-          error: 'Duplicate entries are not permitted.'
-        });
-      } else {
-        database('foods').insert(food, 'id')
-          .then(food => {
-            response.status(201).json({ id: food[0] })
-          })
-          .catch(error => {
-            response.status(500).json({ error });
-          });
-      }
-    });
-});
-
-
-app.delete('/api/v1/foods/:id', (request, response) => {
-  database('foods').where('id', request.params.id).del()
-    .then((foods) => {
-      if (foods == 1) {
-      response.status(200).send({ message: `Successfully deleted food with id ${request.params.id}` })
-    }
-    else {
-        response.sendStatus(500);
-      }
-    })
-    .catch(() => {
-      response.sendStatus(404);
-  })
-});
-
-// ----------------MEALS ENDPOINT------------------
+// ---------------MEALS ENDPOINT------------------
 
 app.get('/api/v1/meals', (request, response) => {
   database.raw(`
