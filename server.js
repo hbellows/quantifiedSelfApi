@@ -2,17 +2,13 @@ const express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
 
-const environment = process.env.NODE_ENV || 'development';
-const configuration = require('./knexfile')[environment];
-const database = require('knex')(configuration);
-
-const foods = require('./lib/routes/api/v1/foods')
-const meals = require('./lib/routes/api/v1/meals')
-
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.set('port', process.env.PORT || 3000);
 app.locals.title = 'Quantified Self';
+
+const foods = require('./lib/routes/api/v1/foods')
+const meals = require('./lib/routes/api/v1/meals')
 
 // CORS Configuration
 app.use(function(req, res, next) {
@@ -32,46 +28,6 @@ app.get('/', (request, response) => {
 app.use('/api/v1/foods', foods)
 app.use('/api/v1/meals', meals)
 
-
-// ---------------MEALS ENDPOINT------------------
-
-// app.get('/api/v1/meals', (request, response) => {
-
-
-// });
-
-// app.post('/api/v1/meals', (request, response) => {
-
-
-
- 
-
-// });
-
-app.get('/api/v1/meals/:meal_id/foods', (request, response) => {
-  const id = request.params.meal_id
-  database.raw(`
-    SELECT meals.id, meals.name, array_to_json
-    (array_agg(json_build_object('id', foods.id, 'name', foods.name, 'calories', foods.calories)))
-    AS foods
-    FROM meals
-    JOIN meal_foods ON meals.id = meal_foods.meal_id
-    JOIN foods ON meal_foods.food_id = foods.id
-    WHERE meals.id = ${id}
-    GROUP BY meals.id`
-    )
-    .then((foods) => {
-      if (foods.rows.length == 0) {
-        response.status(404).send({error: `Could not find meal with id ${id}`})
-      }
-      else {
-        response.status(200).json(foods.rows[0])
-      }
-    })
-    .catch((error) => {
-      response.status(500).json({ error })
-    })
-});
 
 
 app.post('/api/v1/meals/:meal_id/foods/:id', (request, response) => {
