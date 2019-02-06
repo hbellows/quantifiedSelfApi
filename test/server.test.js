@@ -143,7 +143,7 @@ describe('API Routes', () => {
      });
   });
 
-  describe("CREATE /api/v1/foods", () => {
+  describe("POST /api/v1/foods", () => {
     it('should create a new food', done => {
       chai.request(server)
       // Notice the change in the verb
@@ -205,7 +205,7 @@ describe('API Routes', () => {
   });
 
 
-  // -----------------MEALS TESTS-----------------------
+  // -----------------MEALS ROUTES-----------------------
 
   describe('GET /api/v1/meals', () => {
     it('should return all meals', done => {
@@ -234,7 +234,7 @@ describe('API Routes', () => {
       });
   });
 
-  describe("CREATE /api/v1/meals", () => {
+  describe("POST /api/v1/meals", () => {
     it('should create a new meal', done => {
       chai.request(server)
       // Notice the change in the verb
@@ -258,7 +258,7 @@ describe('API Routes', () => {
       var newMeal = {name: 'Breakfast', date: newDate}
       database('meals').insert(newMeal, 'id')
       .then(response => {
-        console.log(response)
+        // console.log(response)
         chai.request(server)
         .post('/api/v1/meals')
         .send(newMeal).end((err, response) => {
@@ -305,7 +305,8 @@ describe('API Routes', () => {
 
   describe('POST /api/v1/meals/:meal_id/foods/:id', () => {
     let targetMeal = {
-      name: 'Dinner'
+      name: 'Dinner',
+      date: new Date()
     }
 
     let targetFood = {
