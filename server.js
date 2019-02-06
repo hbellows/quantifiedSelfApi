@@ -110,7 +110,7 @@ app.post('/api/v1/meals', (request, response) => {
     if (!meal[requiredParameter]) {
       return response
         .status(422)
-        .send({ error: `Expected format: { name: <String>, calories: <String> }. You're missing a "${requiredParameter}" property.` });
+        .send({ error: `Expected format: { name: <String>, date: <yyyy-mm-dd> }. You're missing a "${requiredParameter}" property.` });
     }
   }
 
