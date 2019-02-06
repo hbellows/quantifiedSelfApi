@@ -40,44 +40,13 @@ app.use('/api/v1/meals', meals)
 
 // });
 
-app.post('/api/v1/meals', (request, response) => {
-  const meal = request.body
+// app.post('/api/v1/meals', (request, response) => {
 
-  for (let requiredParameter of ['name', 'date']) {
-    if (!meal[requiredParameter]) {
-      return response
-        .status(422)
-        .send({ error: `Expected format: { name: <String>, date: <yyyy-mm-dd> }. You're missing a "${requiredParameter}" property.` });
-    }
-  }
 
-  database.raw(`
-    SELECT count(meals)
-      AS count
-      FROM meals
-      WHERE name = '${meal.name}'
-      AND meals.date = '${meal.date}'
-    `)
-    .then(result => {
-      // var count = response[]
-      console.log(result)
-      console.log(result['rows'][0]['count']);
-      console.log(result['rows'][0]['count'] == "0");
-      if (!(result['rows'][0]['count'] == "0")) {
-        response.status(409).json({
-          error: 'Duplicate entries are not permitted.'
-        });
-      } else {
-        database('meals').insert(meal, 'id')
-          .then(meal => {
-            response.status(201).json({ id: meal[0] })
-          })
-          .catch(error => {
-            response.status(500).json({ error });
-          });
-      }
-    });
-});
+
+ 
+
+// });
 
 app.get('/api/v1/meals/:meal_id/foods', (request, response) => {
   const id = request.params.meal_id
