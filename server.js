@@ -94,7 +94,8 @@ app.get('/api/v1/meals', (request, response) => {
     FROM meals
     LEFT OUTER JOIN meal_foods ON meals.id = meal_foods.meal_id
     LEFT OUTER JOIN foods ON meal_foods.food_id = foods.id
-    GROUP BY meals.id`)
+    GROUP BY meals.id
+    ORDER BY meals.date DESC`)
     .then((meals) => {
       response.status(200).json(meals.rows)
     })
