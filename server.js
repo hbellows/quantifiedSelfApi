@@ -7,6 +7,7 @@ const configuration = require('./knexfile')[environment];
 const database = require('knex')(configuration);
 
 const foods = require('./lib/routes/api/v1/foods')
+const meals = require('./lib/routes/api/v1/meals')
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -29,26 +30,15 @@ app.get('/', (request, response) => {
 // API
 
 app.use('/api/v1/foods', foods)
+app.use('/api/v1/meals', meals)
 
 
 // ---------------MEALS ENDPOINT------------------
 
-app.get('/api/v1/meals', (request, response) => {
-  database.raw(`
-    SELECT meals.id, meals.name, meals.date, array_to_json
-    (array_agg(json_build_object('id', foods.id, 'name', foods.name, 'calories', foods.calories)))
-    AS foods
-    FROM meals
-    LEFT OUTER JOIN meal_foods ON meals.id = meal_foods.meal_id
-    LEFT OUTER JOIN foods ON meal_foods.food_id = foods.id
-    GROUP BY meals.id`)
-    .then((meals) => {
-      response.status(200).json(meals.rows)
-    })
-    .catch((error) => {
-      response.sendStatus(404).json({ error })
-    })
-});
+// app.get('/api/v1/meals', (request, response) => {
+
+
+// });
 
 app.post('/api/v1/meals', (request, response) => {
   const meal = request.body
