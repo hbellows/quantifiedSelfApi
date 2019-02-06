@@ -214,6 +214,8 @@ This application is part of the Turing School's Module 4 Backend Engineering pro
 ---
 ## Schema Design
 
+![Schema](Schema.png)
+
 ---
 ## Tech Stack List
  - JavaScript
