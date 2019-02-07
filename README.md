@@ -3,7 +3,7 @@
 
 ---
 ## Introduction
-This is a small API that with meals and foods resources that, when consummed by a front end application, will allow a user to track meals, foods, and calories.  Foods can be displayed indvidually and as part of one of four meals: breakfast, lunch, dinner, snack.  In addition, the user can enter new foods, indvidually and by meal, to be stored in the database, as well as delete individual foods, or foods associated with a meal.
+This is a small API with meals and foods resources that, when consummed by a front end application, will allow a user to track meals, foods, and calories.  Foods can be displayed indvidually and as part of one of four meals: breakfast, lunch, dinner, snack.  In addition, the user can enter new foods, indvidually and by meal, to be stored in the database, as well as delete individual foods, or foods associated with a meal.
 
 To see how the app was planned and executed, and to see issues still in progress, visit it's project board [here](https://waffle.io/hbellows/quantifiedSelfApi), or by clicking the waffle banner above.
 
